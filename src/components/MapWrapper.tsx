@@ -15,11 +15,23 @@ import Geometry from 'ol/geom/Geometry';
 import './MapWrapper.css';
 import { fromLonLat } from 'ol/proj';
 
+import { useGlobalContext } from '../context';
+
+const googleMapLayer = new TileLayer({
+    source: new XYZ({
+        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+    }),
+});
+
+const OSMLayer = new TileLayer({
+    source: new OSM(),
+});
+
 function MapWrapper({ features }: any) {
-    const [map, setMap] = useState<Map>();
+    const { map, setMap } = useGlobalContext();
+
     const [featuresLayer, setFeaturesLayer] =
         useState<VectorLayer<VectorSource<Geometry>>>();
-    const [selectedCoord, setSelectedCoord] = useState<Coordinate>();
 
     const mapElement = useRef();
 
@@ -27,40 +39,24 @@ function MapWrapper({ features }: any) {
     mapRef.current = map;
 
     useEffect(() => {
-        const initalFeaturesLayer = new VectorLayer({
+        const initialFeaturesLayer = new VectorLayer({
             source: new VectorSource(features),
         });
-
-        const itaguiLonLat = [-75.59913, 6.18461];
-        const itaguiWebMercator = fromLonLat(itaguiLonLat);
 
         // create map
         const initialMap = new Map({
             target: mapElement.current,
             view: new View({
                 projection: 'EPSG:3857',
-                center: itaguiWebMercator,
-                zoom: 13,
+                center: [0, 0],
+                zoom: 2,
             }),
-            layers: [
-                // Google Maps Terrain
-                new TileLayer({
-                    source: new XYZ({
-                        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
-                    }),
-                }),
-
-                // new TileLayer({
-                //     source: new OSM(),
-                // }),
-
-                initalFeaturesLayer,
-            ],
+            layers: [OSMLayer, googleMapLayer, initialFeaturesLayer],
             controls: [],
         });
 
         setMap(initialMap);
-        setFeaturesLayer(initalFeaturesLayer);
+        setFeaturesLayer(initialFeaturesLayer);
     }, []);
 
     useEffect(() => {
@@ -72,9 +68,11 @@ function MapWrapper({ features }: any) {
                     })
                 );
 
-            map?.getView().fit(featuresLayer!.getSource()!.getExtent(), {
-                padding: [100, 100, 100, 100],
-            });
+            if (featuresLayer) {
+                map?.getView().fit(featuresLayer.getSource()!.getExtent(), {
+                    padding: [100, 100, 100, 100],
+                });
+            }
         }
     }, [features]);
 
