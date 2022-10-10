@@ -2,17 +2,12 @@ import { useState, useEffect } from 'react';
 
 import { useGlobalContext } from './context';
 
-import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
-
 import { Drawer } from 'antd';
 
 import Titlebar from '@terrestris/react-geo/dist/Panel/Titlebar/Titlebar';
-// import NominatimSearch from '@terrestris/react-geo/dist/Field/NominatimSearch/NominatimSearch';
+
 import SimpleButton from '@terrestris/react-geo/dist/Button/SimpleButton/SimpleButton';
 import MeasureButton from '@terrestris/react-geo/dist/Button/MeasureButton/MeasureButton';
-// import SelectFeaturesButton from '@terrestris/react-geo/dist/Button/SelectFeaturesButton/SelectFeaturesButton';
-import DrawButton from '@terrestris/react-geo/dist/Button/DrawButton/DrawButton';
 import DigitizeButton from '@terrestris/react-geo/dist/Button/DigitizeButton/DigitizeButton';
 import ToggleGroup from '@terrestris/react-geo/dist/Button/ToggleGroup/ToggleGroup';
 
@@ -25,9 +20,6 @@ import MapWrapper from './components/MapWrapper';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Feature } from 'ol';
 import Geometry from 'ol/geom/Geometry';
-import Layer from 'ol/layer/Layer';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
 
 const App = () => {
     const { map } = useGlobalContext();
@@ -81,7 +73,7 @@ const App = () => {
                 </SimpleButton>
             </Titlebar>
             <Drawer
-                title="react-geo-application"
+                title="Menu de opciones"
                 placement="right"
                 onClose={toggleDrawer}
                 open={visible}
@@ -116,6 +108,9 @@ const App = () => {
                         name="drawPolygon"
                         map={map}
                         drawType="Polygon"
+                        style={{
+                            width: '100%',
+                        }}
                     >
                         Crear polygon
                     </DigitizeButton>
@@ -123,27 +118,22 @@ const App = () => {
                         name="selectAndModify"
                         map={map}
                         editType="Edit"
+                        style={{
+                            width: '100%',
+                        }}
                     >
-                        Seleccionar y Modificar Polygon
+                        Modificar Polygon
                     </DigitizeButton>
                     <DigitizeButton
                         name="deleteFeature"
                         map={map}
                         editType="Delete"
+                        style={{
+                            width: '100%',
+                        }}
                     >
                         Eliminar polygon
                     </DigitizeButton>
-                    {/* <SelectFeaturesButton
-                        layers={layers}
-                        onFeatureSelect={(e) => {
-                            console.log(e);
-
-                            setCurrentFeature(e.selected[0]);
-                        }}
-                    >
-                        Select feature
-                    </SelectFeaturesButton>
-                    {currentFeature && currentFeature.get('NOM_BARRIO')} */}
                 </ToggleGroup>
             </Drawer>
             <MapWrapper features={features} />
